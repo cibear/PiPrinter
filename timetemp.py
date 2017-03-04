@@ -17,10 +17,10 @@ from __future__ import print_function
 from Adafruit_Thermal import *
 import Image, ImageDraw, time, urllib, json
 
-API_KEY = "YOUR_API_KEY"
+API_KEY = "11f667231aaaff55b3e9e003a53318ea"
 
 LAT = "40.726019"
-LONG = "-74.00536"
+LONG = "8.687550"
 
 # Fetch weather data from DarkSky, parse resulting JSON
 url = "https://api.darksky.net/forecast/"+API_KEY+"/"+LAT+","+LONG+"?exclude=[alerts,minutely,hourly,flags]&units=us"
