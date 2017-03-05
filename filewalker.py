@@ -13,7 +13,7 @@ class ItemPickException(Exception):
 
        
 #picks an item (text, png...) from item_folder by date ("YYYY-MM-DD.*", or if none given, randomly, and returns full file path
-def pick_item(item_folder, date = 0):
+def pick_item(item_folder, chosen_date = 0):
     #print "Hello World!"
 
     file_list = []
@@ -27,8 +27,8 @@ def pick_item(item_folder, date = 0):
             f=f+1
             file_list.append(filename)
             #is the file name the same as the given date? then return date-specific item
-            if filename.split(".")[0] == date:
-                return item_folder+"/"+i
+            if filename.split(".")[0] == str(chosen_date):
+                return item_folder+"/"+filename
         #once top level folder is run through, choose:
         if len(file_list) < 1:
             raise ItemPickException("No items left in folder!")
