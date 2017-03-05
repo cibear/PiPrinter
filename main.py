@@ -5,7 +5,7 @@
 # and daily actions (Sudoku and weather by default).
 # Written by Adafruit Industries.  MIT license.
 #
-# MUST BE RUN AS ROOT (due to GPIO access)
+# MUST BE RUN AS ROOTi (due to GPIO access)
 #
 # Required software includes Adafruit_Thermal, Python Imaging and PySerial
 # libraries. Other libraries used are part of stock Python install.
