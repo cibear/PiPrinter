@@ -19,7 +19,7 @@ picked_item = filewalker.pick_item(item_folder,date.today())
 if picked_item.rsplit(".",1)[0] == "png":
     printer.printImage(Image.open(filewalker.pick_item(item_folder)), True)
 elif picked_item.rsplit(".",1)[0] == "txt":
-    textfile_handle = open("testfile.text", "r") 
+    textfile_handle = open(picked_item, "r") 
     #print textfile_handle.read()
     printer.println(textfile_handle.read()) 
 printer.feed(3)
