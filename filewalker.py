@@ -28,14 +28,14 @@ def pick_item(item_folder, date = 0):
             file_list.append(filename)
             #is the file name the same as the given date? then return date-specific item
             if filename.split(".")[0] == date:
-                return item_folder+i
+                return item_folder+"/"+i
         #once top level folder is run through, choose:
         if len(file_list) < 1:
             raise ItemPickException("No items left in folder!")
         else:
             i = random.choice(file_list)
             #return chosen file
-            return item_folder+i
+            return item_folder+"/"+i
         break   #break after top level folder, don't recurse into subfolders
  
 #moves a specific file to a new subfolder bin_folder (standard: "used")
