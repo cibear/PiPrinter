@@ -17,6 +17,7 @@
 from __future__ import print_function
 import RPi.GPIO as GPIO
 import subprocess, time, Image, socket
+import datetime
 from Adafruit_Thermal import *
 
 print("Starting up....")
@@ -99,10 +100,12 @@ except:
 	printer.feed(3)
 	exit(0)
 
-# Print greeting image
-printer.printImage(Image.open('gfx/hello.png'), True)
+# Print greeting image.
+printer.print('Started at ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 printer.feed(3)
 GPIO.output(ledPin, GPIO.LOW)
+	
+
 
 # Poll initial button state and time
 prevButtonState = GPIO.input(buttonPin)
@@ -134,7 +137,17 @@ while(True):
       # Yes.  Debounced press or release...
       if buttonState == True:       # Button released?
         if tapEnable == True:       # Ignore if prior hold()
-          tap()                     # Tap triggered (button released)
+
+          # Once per day (currently set for 6:30am local time, or when script
+          # is first run, if after 5:30am), run forecast and sudoku scripts.
+          l = time.localtime()
+          if (60 * l.tm_hour + l.tm_min) > (60 * 5 + 30):
+            if dailyFlag == False:
+              daily()
+              dailyFlag = True
+          else:
+            dailyFlag = False  # Reset daily trigger
+            tap()                     # Tap triggered (button released)
           tapEnable  = False        # Disable tap and hold
           holdEnable = False
       else:                         # Button pressed
@@ -145,20 +158,10 @@ while(True):
   # Pin 18 is PWM-capable and a "sleep throb" would be nice, but
   # the PWM-related library is a hassle for average users to install
   # right now.  Might return to this later when it's more accessible.
-  if ((int(t) & 1) == 0) and ((t - int(t)) < 0.15):
+  if ((int(t) & 1) == 0) and ((t - int(t)) < 0.15) and dailyFlag == False:
     GPIO.output(ledPin, GPIO.HIGH)
   else:
     GPIO.output(ledPin, GPIO.LOW)
-
-  # Once per day (currently set for 6:30am local time, or when script
-  # is first run, if after 5:30am), run forecast and sudoku scripts.
-  l = time.localtime()
-  if (60 * l.tm_hour + l.tm_min) > (60 * 5 + 30):
-    if dailyFlag == False:
-      daily()
-      dailyFlag = True
-  else:
-    dailyFlag = False  # Reset daily trigger
 
   # Every 30 seconds, run Twitter scripts.  'lastId' is passed around
   # to preserve state between invocations.  Probably simpler to do an
