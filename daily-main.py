@@ -18,6 +18,7 @@ from __future__ import print_function
 import RPi.GPIO as GPIO
 import subprocess, time, Image, socket
 import datetime
+import filewalker
 from Adafruit_Thermal import *
 
 print("Starting up....")
@@ -33,7 +34,6 @@ printer      = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
 # Daytime to reset the printer to print the new message of the next day
 hrs  = 4
 mins = 0
-
 
 # Called when button is briefly tapped.  Invokes time/temperature script.
 def tap():
@@ -87,7 +87,6 @@ GPIO.output(ledPin, GPIO.HIGH)
 
 # Processor load is heavy at startup; wait a moment to avoid
 # stalling during greeting.
-#time.sleep(30)
 
 # Show IP address (if network is available)
 try:
@@ -97,20 +96,26 @@ try:
 	printer.feed(3)
 except:
 	printer.boldOn()
-	printer.println('Network is unreachable.')
+	printer.println('Network is unreachable. Waiting 30 seconds...')
 	printer.boldOff()
-	printer.print('Connect display and keyboard\n'
-	  'for network troubleshooting.')
-	printer.feed(3)
-	exit(0)
+        time.sleep(30)
+        try:
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		s.connect(('8.8.8.8', 0))
+		printer.print('My IP address is ' + s.getsockname()[0])
+		printer.feed(3)
+	except:
+		printer.boldOn()
+		printer.println('Network problems still occuring. Exiting...')
+		printer.boldOff()
+		printer.feed(3)
+		exit(0)
 
 # Print greeting image.
 printer.print('Started at ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 printer.feed(3)
 GPIO.output(ledPin, GPIO.LOW)
 	
-
-
 # Poll initial button state and time
 prevButtonState = GPIO.input(buttonPin)
 prevTime        = time.time()

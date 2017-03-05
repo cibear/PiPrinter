@@ -3,15 +3,12 @@ import sys
 import copy
 import random
 
-standard_folder = "C:/Users/Christian/Documents/GitHub/PiPrinter/pics"
-
 def pick_random_pic(picture_folder):
     #print "Hello World!"
-    
 
     file_list = []
     
-    for dirname, dirnames, filenames in os.walk(standard_folder):
+    for dirname, dirnames, filenames in os.walk(picture_folder):
         #print 'Active folder:'+dirname
         # print all filenames.
         f=1
@@ -27,8 +24,10 @@ def pick_random_pic(picture_folder):
             i = random.choice(file_list)
             #process chosen file
             #print i
-            os.rename(standard_folder+"/"+i, standard_folder+"/used_pics/"+i)
-            return standard_folder+"/used_pics/"+i
+            print(picture_folder+"/"+i)
+            print(picture_folder+"/used_pics/"+i)
+            os.rename(picture_folder+"/"+i, picture_folder+"/used_pics/"+i)
+            return picture_folder+"/used_pics/"+i
         break   #break after top level folder, don't recurse into subfolders
  
 
