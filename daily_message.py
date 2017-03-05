@@ -28,10 +28,11 @@ if picked_item.rsplit(".",1)[1] == "png":
     printer.printImage(Image.open(filewalker.pick_item(item_folder)), True)
     print "Image printed..."
 elif picked_item.rsplit(".",1)[1] == "txt":
-    textfile_handle = open(picked_item, "r") 
-    print textfile_handle.read()
+    textfile_handle = open(picked_item, "r")
+    textfile_output = textfile_handle.read() 
+    print textfile_output
     printer.println('Now printing text file:')
-    printer.println(str(textfile_handle.read()))
+    printer.println(textfile_output)
 printer.feed(3)
 #clean up by moving picked item to bin folder
 #filewalker.move_to_bin(picked_item)
