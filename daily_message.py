@@ -18,6 +18,10 @@ print "Script started..."
 picked_item = filewalker.pick_item(item_folder,date.today())
 
 #process according to file type
+print "picked item: " + picked_item
+print "png?" + picked_item.rsplit(".",1)[0] == "png"
+print "txt?" + picked_item.rsplit(".",1)[0] == "txt"
+
 if picked_item.rsplit(".",1)[0] == "png":
     printer.printImage(Image.open(filewalker.pick_item(item_folder)), True)
 elif picked_item.rsplit(".",1)[0] == "txt":
