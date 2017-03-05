@@ -31,6 +31,7 @@ elif picked_item.rsplit(".",1)[1] == "txt":
     textfile_handle = open(picked_item, "r") 
     print textfile_handle.read()
     printer.println(textfile_handle.read()) 
+    printer.print(textfile_handle.read())
 printer.feed(3)
 #clean up by moving picked item to bin folder
 #filewalker.move_to_bin(picked_item)
