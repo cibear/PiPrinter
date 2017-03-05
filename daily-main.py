@@ -30,6 +30,10 @@ dailyFlag    = False # Set after daily trigger occurs
 lastId       = '1'   # State information passed to/from interval script
 printer      = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
 
+# Daytime to reset the printer to print the new message of the next day
+hrs  = 4
+mins = 0
+
 
 # Called when button is briefly tapped.  Invokes time/temperature script.
 def tap():
@@ -140,19 +144,20 @@ while(True):
 
           # Once per day (currently set for 6:30am local time, or when script
           # is first run, if after 5:30am), run forecast and sudoku scripts.
-          l = time.localtime()
-          if (60 * l.tm_hour + l.tm_min) > (60 * 5 + 30):
-            if dailyFlag == False:
-              daily()
-              dailyFlag = True
+          if dailyFlag == False:
+            daily()
+            dailyFlag = True
           else:
-            dailyFlag = False  # Reset daily trigger
             tap()                     # Tap triggered (button released)
           tapEnable  = False        # Disable tap and hold
           holdEnable = False
       else:                         # Button pressed
         tapEnable  = True           # Enable tap and hold actions
         holdEnable = True
+
+  l = time.localtime()
+  if (60 * l.tm_hour + l.tm_min) > (60 * hrs + mins) and (60 * l.tm_hour + l.tm_min) < (60 * hrs + mins + 2):
+    dailyFlag = False
 
   # LED blinks while idle, for a brief interval every 2 seconds.
   # Pin 18 is PWM-capable and a "sleep throb" would be nice, but
