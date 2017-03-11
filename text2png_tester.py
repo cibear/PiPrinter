@@ -15,12 +15,21 @@ class GeneralException(Exception):
         return self.msg
 #########################
 
-
+LEFT = 1
+CENTER = 2
+RIGHT = 3
 
 locale.setlocale(locale.LC_ALL, 'deu_deu')  ## may need fixing/porting under Raspian/Linux (de_DE?)
 
+# define usable fonts
 font = ImageFont.truetype('ArialBd.ttf', 14, encoding='unic')
 header_font = ImageFont.truetype('Verdana.ttf', 14, encoding='unic')
+
+# stores pictures usable for messages
+Pics = {}
+Pics["Rose"]="gfx/rose2.png"
+Pics["Schweinchen"]="gfx/Schweinchen.png"
+
 
 output_string = "Hallo Welt! Dies ist meine offizielle Nachricht für den Printer. Ich hoffe sie wird auch gedruckt"
 text = output_string.decode('utf-8')
@@ -28,9 +37,13 @@ wrap_limit = 40 #character limit per line
 offset_x = 10
 offset_y = 10
 msg_spacer = 10         # optional feed spacer between text elements
-msg_header = "~~~~~~~~~~ {:%d. %B %Y} ~~~~~~~~~~".format(date.today())
+msg_header = "~~~~~~~~~ {:%d. %B %Y} ~~~~~~~~~".format(date.today())
 msg_bottom = "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-Message_components = ((msg_header,header_font), msg_spacer, ("png","gfx/rose2.png"), 30, text, msg_spacer, (msg_bottom,header_font))
+Rose_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Rose']), 30, text, msg_spacer, (msg_bottom,header_font))
+Schweinchen_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Schweinchen']), 30, text, msg_spacer, (msg_bottom,header_font))
+
+Message = Rose_Message
+
 
 #font_path = '/library/fonts/ARIAL.TTF'
 #font = ImageFont.truetype(font_path, 14, encoding='unic')
@@ -52,18 +65,36 @@ def get_textblock_size(text, font, wrap_limit=-1):
     return x_text, y_text
 
 
+def align_x_left(line_x,canvas_x=1000):
+    return 0
+
+def align_x_center(line_x,canvas_x=1000):
+    return (canvas_x/2) - (line_x / 2)
+
+def align_x_right(line_x,canvas_x=1000):
+    return canvas_x - line_x
 
 
     
 
 
 # print text for real
-def msg_block2png(Message_components,font,wrap_limit=-1,offset_x=0,offset_y=0,file_handle='stdout.png'):
+def msg_block2png(Message_components,font,wrap_limit=-1,offset_x=0,offset_y=0,file_handle='stdout.png',align=CENTER):
     # turns a series of strings, feeders or picutres to a finished message block in png format
 
     # initialize image
-    image = Image.new("1", [1000,1000], "white") # Working 'background' image
+    canvas_x = canvas_y = 1000
+    image = Image.new("1", [canvas_x,canvas_y], "white") # Working 'background' image
     draw = ImageDraw.Draw(image)
+    
+    #assign alignment calculation
+    if align == LEFT:
+        align_type = align_x_left
+    elif align == CENTER:
+        align_type = align_x_center
+    elif align == RIGHT:
+        align_type = align_x_right
+        offset_x = -offset_x
     
     x_text = offset_x   # initialize tracker for offset + textblock height
     y_text = offset_y   
@@ -74,7 +105,7 @@ def msg_block2png(Message_components,font,wrap_limit=-1,offset_x=0,offset_y=0,fi
             if element[0] == "png":              # consider png file with path in element[1]
                 try:
                     img     = Image.open(element[1])
-                    image.paste(img, (offset_x,y_text))
+                    image.paste(img, (align_type(img.size[0],canvas_x)+offset_x,y_text))
                     y_text += img.size[1]           # read image y size and add to counter
                 except GeneralException:
                     print "Could not open file '%x'passed as message component",element[1]
@@ -92,20 +123,23 @@ def msg_block2png(Message_components,font,wrap_limit=-1,offset_x=0,offset_y=0,fi
             for line in lines:
                 print line, y_text
                 width, height = active_font.getsize(line)
-                draw.text((offset_x, y_text), line, font=active_font)
+                draw.text((align_type(width,canvas_x)+offset_x, y_text), line, font=active_font)
                 y_text += height
                 x_text = max(x_text,width)  # if line is longer than those before, this is the new max.
         elif isinstance(element, (int,long)): # is feeder?
             y_text += element
 
     # crop
-    print [0,0,x_text+offset_x, y_text+offset_y]
-    crop_image = image.crop((0,0,x_text+offset_x, y_text+offset_y))
+    if align == LEFT:
+        crop_image = image.crop((0,0,x_text+offset_x, y_text+offset_y))
+    elif align == CENTER:
+        crop_image = image.crop((canvas_x/2 - (x_text/2),0,canvas_x/2 + (x_text/2) +offset_x, y_text+offset_y))
+    elif align == RIGHT:
+        crop_image = image.crop((canvas_x - (x_text), 0, canvas_x, y_text+offset_y))
+
     # save output file
     crop_image.save(file_handle)
+    return crop_image
 
-print "What?: "+str(get_textblock_size("Hello my name is Dr. Greenthumb", font))
-msg_block2png(Message_components, font, wrap_limit, offset_x, offset_y)
-
-#draw.text((10, 25), text, font=font)
-#image.show()
+returned_image = msg_block2png(Message, font, wrap_limit, offset_x, offset_y)
+returned_image.show("Returned Image")
