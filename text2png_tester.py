@@ -5,6 +5,7 @@ import textwrap
 from datetime import date
 import locale
 from PIL._imaging import font
+from MessageClass import *
 
 ### error handling
 #error class that handles exceptions in pick_item routine
@@ -39,10 +40,10 @@ offset_y = 10
 msg_spacer = 10         # optional feed spacer between text elements
 msg_header = "~~~~~~~~~ {:%d. %B %Y} ~~~~~~~~~".format(date.today())
 msg_bottom = "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-Rose_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Rose']), 30, text, msg_spacer, (msg_bottom,header_font))
-Schweinchen_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Schweinchen']), 30, text, msg_spacer, (msg_bottom,header_font))
+#Rose_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Rose']), 30, text, msg_spacer, (msg_bottom,header_font))
+#Schweinchen_Message = ((msg_header,header_font), msg_spacer, ("png",Pics['Schweinchen']), 30, text, msg_spacer, (msg_bottom,header_font))
 
-Message = Rose_Message
+#Message = Rose_Message
 
 
 #font_path = '/library/fonts/ARIAL.TTF'
@@ -141,5 +142,10 @@ def msg_block2png(Message_components,font,wrap_limit=-1,offset_x=0,offset_y=0,fi
     crop_image.save(file_handle)
     return crop_image
 
-returned_image = msg_block2png(Message, font, wrap_limit, offset_x, offset_y)
-returned_image.show("Returned Image")
+
+#XX = Message("This is the text!",Message_Style["Rose"])
+
+#XX.print_me()
+
+#returned_image = msg_block2png(Message, font, wrap_limit, offset_x, offset_y)
+#returned_image.show("Returned Image")

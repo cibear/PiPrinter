@@ -3,6 +3,7 @@ import sys
 import copy
 import random
 from datetime import date
+import re
 
 #error class that handles exceptions in pick_item routine
 class ItemPickException(Exception):
@@ -22,13 +23,16 @@ def pick_item(item_folder, chosen_date = 0):
         #print 'Active folder:'+dirname
         # print all filenames.
         f=1
+        #first, look for today's date item
         for filename in filenames:
             #print '['+`f`+'] ' + filename
             f=f+1
-            file_list.append(filename)
             #is the file name the same as the given date? then return date-specific item
             if filename.split(".")[0] == str(chosen_date):
                 return item_folder+"/"+filename
+            #add all other files to list, ignoring all other "dated" items in format "YYYY-MM-DD"
+            elif not re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}',filename.split(".")[0]):
+                file_list.append(filename)
         #once top level folder is run through, choose:
         if len(file_list) < 1:
             raise ItemPickException("No items left in folder!")
