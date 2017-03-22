@@ -62,6 +62,7 @@ def daily():
   GPIO.output(ledPin, GPIO.HIGH)
   subprocess.call(["python", "forecast.py"])
   subprocess.call(["python", "sudoku-gfx.py"])
+  
   GPIO.output(ledPin, GPIO.LOW)
 
 
@@ -97,7 +98,7 @@ except:
 	exit(0)
 
 # Print greeting image
-printer.printImage(Image.open('gfx/hello.png'), True)
+printer.printImage(Image.open('gfx/helloworld.png'), True)
 printer.feed(3)
 GPIO.output(ledPin, GPIO.LOW)
 

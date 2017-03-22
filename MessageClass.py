@@ -5,6 +5,8 @@ from datetime import date
 import locale
 from PIL._imaging import font
 from MessageClass import *
+import random
+import os
 
 ### error handling
 #error class that handles exceptions in pick_item routine
@@ -15,16 +17,26 @@ class GeneralException(Exception):
         return self.msg
 #########################
 
-
+fonts = ["ArialBd.ttf","Verdana.ttf","ELEPHNT.TTF"]
 
 # define usable fonts
 font = ImageFont.truetype('ArialBd.ttf', 14, encoding='unic')
 header_font = ImageFont.truetype('Verdana.ttf', 14, encoding='unic')
+font2 = ImageFont.truetype('ELEPHNT.ttf', 14, encoding='unic')
 
 # stores pictures usable for messages
-Pics = {}
-Pics["Rose"]="gfx/rose2.png"
-Pics["Schweinchen"]="gfx/Schweinchen.png"
+symbol_folder = os.path.dirname(os.path.realpath(__file__)) + "/symbols"
+Pics = []
+
+#populate Pics list with symbols
+for dirname, dirnames, filenames in os.walk(symbol_folder):
+    for filename in filenames:
+        if filename.split(".")[1] == "png":
+            Pics.append(os.path.join(dirname,filename))
+
+#Pics["Rose"]="gfx/rose2.png"
+#Pics["Schweinchen"]="gfx/Schweinchen.png"
+#Pics["Kalender"]="gfx/calendar.png"
 
 
 
@@ -39,8 +51,9 @@ msg_bottom = "~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 
 # Message Styles
 Message_Style = {
-    "Rose":[[msg_header,header_font], msg_spacer, ["png",Pics['Rose']], 30, "text", msg_spacer, [msg_bottom,header_font]],
-    "Schweinchen":[[msg_header,header_font], msg_spacer, ["png",Pics['Schweinchen']], 30, "text", msg_spacer, [msg_bottom,header_font]]
+#    "Rose":[[msg_header,header_font], msg_spacer, ["png",Pics['Rose']], 30, "text", msg_spacer, [msg_bottom,header_font]],
+#    "Schweinchen":[[msg_header,header_font], msg_spacer, ["png",Pics['Schweinchen']], 30, "text", msg_spacer, [msg_bottom,header_font]],
+    "Random":[[msg_header,header_font], msg_spacer, ["png",random.choice(Pics)], 30, "text", msg_spacer, [msg_bottom,header_font]]
 }
 
 
