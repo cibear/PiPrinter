@@ -20,16 +20,18 @@ LEFT = 1
 CENTER = 2
 RIGHT = 3
 
-locale.setlocale(locale.LC_ALL, 'deu_deu')  ## may need fixing/porting under Raspian/Linux (de_DE?)
+#locale.setlocale(locale.LC_ALL, 'deu_deu')  ## may need fixing/porting under Raspian/Linux (de_DE?)
 
-# define usable fonts
-font = ImageFont.truetype('ArialBd.ttf', 14, encoding='unic')
-header_font = ImageFont.truetype('Verdana.ttf', 14, encoding='unic')
-
-# stores pictures usable for messages
-Pics = {}
-Pics["Rose"]="gfx/rose2.png"
-Pics["Schweinchen"]="gfx/Schweinchen.png"
+# # define usable fonts
+# font_folder = "library/fonts/"
+# 
+# font = ImageFont.truetype(font_folder+'ArialBd.ttf', 14, encoding='unic')
+# header_font = ImageFont.truetype(font_folder+'Verdana.ttf', 14, encoding='unic')
+# 
+# # stores pictures usable for messages
+# Pics = {}
+# Pics["Rose"]="gfx/rose2.png"
+# Pics["Schweinchen"]="gfx/Schweinchen.png"
 
 
 output_string = "Hallo Welt! Dies ist meine offizielle Nachricht für den Printer. Ich hoffe sie wird auch gedruckt"

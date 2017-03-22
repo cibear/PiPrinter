@@ -7,6 +7,7 @@ from PIL._imaging import font
 from MessageClass import *
 import random
 import os
+from strop import lowercase
 
 ### error handling
 #error class that handles exceptions in pick_item routine
@@ -17,12 +18,22 @@ class GeneralException(Exception):
         return self.msg
 #########################
 
-fonts = ["ArialBd.ttf","Verdana.ttf","ELEPHNT.TTF"]
 
 # define usable fonts
-font = ImageFont.truetype('ArialBd.ttf', 14, encoding='unic')
-header_font = ImageFont.truetype('Verdana.ttf', 14, encoding='unic')
-font2 = ImageFont.truetype('ELEPHNT.ttf', 14, encoding='unic')
+fonts = []
+font_folder = os.path.dirname(os.path.realpath(__file__)) + "/library/fonts/"
+
+#populate font list with fonts
+for dirname, dirnames, filenames in os.walk(font_folder):
+    for filename in filenames:
+        if filename.split(".")[1].lower() == "ttf":
+            fonts.append(os.path.join(dirname,filename))
+            print(fonts)
+
+print font_folder+'ARIALBD.TTF'
+font = ImageFont.truetype(font_folder+'ARIALBD.TTF', 14, encoding='unic')
+header_font = ImageFont.truetype(font_folder+'VERDANA.TTF', 14, encoding='unic')
+font2 = ImageFont.truetype(font_folder+'ELEPHNT.TTF', 14, encoding='unic')
 
 # stores pictures usable for messages
 symbol_folder = os.path.dirname(os.path.realpath(__file__)) + "/symbols"

@@ -18,8 +18,15 @@ from __future__ import print_function
 import RPi.GPIO as GPIO
 import subprocess, time, Image, socket
 import datetime
+from datetime import date
 import filewalker
 from Adafruit_Thermal import *
+import os
+from PIL import Image
+import text2png_tester
+from MessageClass import *
+import random
+import locale
 
 print("Starting up....")
 ledPin       = 18
@@ -30,6 +37,9 @@ nextInterval = 0.0   # Time of next recurring operation
 dailyFlag    = False # Set after daily trigger occurs
 lastId       = '1'   # State information passed to/from interval script
 printer      = Adafruit_Thermal("/dev/serial0", 19200, timeout=5)
+
+#get locale for date display
+locale.setlocale(locale.LC_ALL, '')
 
 # set item path
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -80,14 +90,18 @@ def daily():
   print("First button press of the day...")
   GPIO.output(ledPin, GPIO.HIGH)
   #subprocess.call(["python", "daily_message.py"])
-  printer.printImage(Image.open(png_from_item(picked_item)), True)
+#  output_image = Image.open(png_from_item(picked_item))
+#  image_buffer = output_image.load()
+  printer.printImage(png_from_item(picked_item), True)
+  printer.feed(3)
   GPIO.output(ledPin, GPIO.LOW)
 
 # takes a file path and return ready-to-print png image, converting text files by invoking MessageClass
 def png_from_item(picked_item):
     if picked_item.rsplit(".",1)[1] == "png":
-        print "Image printed..."
-        return Image.open(picked_item)
+        print("Image printed...")
+        print(picked_item)
+        return Image.open(picked_item, True)
     elif picked_item.rsplit(".",1)[1] == "txt":
         textfile_handle = open(picked_item, "r")
         textfile_output = "".join(textfile_handle.readlines())
@@ -146,6 +160,10 @@ holdEnable      = False
 
 print("Waiting for event....")
 
+#initialize item to start with
+# pick item of the day
+picked_item = filewalker.pick_item(item_folder,date.today())
+
 # Main loop
 while(True):
 
@@ -190,8 +208,10 @@ while(True):
   ###    move_to_bin(picked_item)    
     # pick item of the day
     picked_item = filewalker.pick_item(item_folder,date.today())
+    print(picked_item)
     # print item of the day
     printer.printImage(png_from_item(picked_item), True)
+    printer.feed(3)
     
 
   # LED blinks while idle, for a brief interval every 2 seconds.
